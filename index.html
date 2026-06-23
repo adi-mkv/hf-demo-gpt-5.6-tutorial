@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>How I Built My HyperFrames Motion Graphic</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Geist:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg-from:   #0f0d13;
+    --bg-to:     #0a0a0c;
+    --bg-raised: #17151e;
+    --bg-inset:  #1e1c27;
+    --border:    #272430;
+    --text:      #f0ede8;
+    --text-2:    #f0ede8;
+    --text-3:    #6b6880;
+    --accent:    #3d2474;
+    --col:       680px;
+  }
+
+  html { font-size: 17px; scroll-behavior: smooth; }
+
+  body {
+    background: linear-gradient(135deg, var(--bg-from) 0%, var(--bg-to) 100%);
+    min-height: 100vh;
+    color: var(--text);
+    font-family: 'Geist', system-ui, sans-serif;
+    font-weight: 300;
+    line-height: 1.75;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  #progress {
+    position: fixed;
+    top: 0; left: 0;
+    height: 2px;
+    background: var(--accent);
+    width: 0%;
+    z-index: 200;
+    transition: width 0.08s linear;
+  }
+
+  .hero {
+    max-width: var(--col);
+    margin: 0 auto;
+    padding: 4rem 1.5rem 0;
+    opacity: 0;
+    animation: fadeUp 0.7s ease 0.1s forwards;
+  }
+
+  h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(2.8rem, 7vw, 4.2rem);
+    font-weight: 700;
+    line-height: 1.08;
+    letter-spacing: -0.02em;
+    color: var(--text);
+    margin-bottom: 1.2rem;
+  }
+
+  .subtitle {
+    font-family: 'Geist', sans-serif;
+    font-size: 0.98rem;
+    font-weight: 300;
+    color: var(--text-2);
+    line-height: 1.72;
+    margin-bottom: 1.6rem;
+    max-width: 540px;
+  }
+
+  .byline {
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+    padding-bottom: 1.4rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .avatar {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    background: var(--bg-inset);
+    border: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--text-2);
+    flex-shrink: 0;
+  }
+
+  .byline-text { font-size: 0.76rem; color: var(--text-3); line-height: 1.5; }
+  .byline-text strong { color: var(--text-2); font-weight: 500; display: block; }
+
+  .video-wrap {
+    max-width: var(--col);
+    margin: 2rem auto 0;
+    padding: 0 1.5rem;
+    opacity: 0;
+    animation: fadeUp 0.8s ease 0.18s forwards;
+  }
+
+  .demo-video {
+    display: block;
+    width: min(100%, 420px);
+    max-height: 78vh;
+    margin: 0 auto;
+    aspect-ratio: 9 / 16;
+    object-fit: contain;
+    border-radius: 18px;
+    border: 1px solid var(--border);
+    background: var(--bg-raised);
+  }
+
+  article {
+    max-width: var(--col);
+    margin: 0 auto;
+    padding: 2.6rem 1.5rem 7rem;
+    opacity: 0;
+    animation: fadeUp 0.8s ease 0.25s forwards;
+  }
+
+  article p {
+    font-family: 'Geist', sans-serif;
+    font-size: 1rem;
+    font-weight: 300;
+    color: var(--text-2);
+    margin-bottom: 1.5rem;
+    line-height: 1.82;
+  }
+
+  article p:first-of-type { font-size: 1.04rem; }
+
+  .drop-cap::first-letter {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 4.5rem;
+    font-weight: 700;
+    float: left;
+    line-height: 0.8;
+    margin-right: 0.1em;
+    margin-top: 0.12em;
+    color: var(--text);
+  }
+
+  h2 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.75rem;
+    font-weight: 600;
+    color: var(--text);
+    margin: 3.5rem 0 0.85rem;
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+  }
+
+  .skill-num {
+    display: inline-block;
+    font-family: 'Geist', sans-serif;
+    font-size: 0.65rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    color: var(--text-3);
+    text-transform: uppercase;
+    margin-bottom: 0.4rem;
+  }
+
+  /* Code block */
+  .code-wrap {
+    background: var(--bg-raised);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+    margin: 2.8rem 0;
+  }
+
+  .code-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.65rem 1.1rem;
+    border-bottom: 1px solid var(--border);
+    font-family: 'Geist', sans-serif;
+    font-size: 0.7rem;
+    letter-spacing: 0.06em;
+    color: var(--text-3);
+  }
+
+  .copy-btn {
+    position: relative;
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    color: var(--text-3);
+    font-family: 'Geist', sans-serif;
+    font-size: 0.65rem;
+    letter-spacing: 0.05em;
+    padding: 0.25rem 0.65rem;
+    cursor: pointer;
+    overflow: hidden;
+    transition: color 0.2s, border-color 0.2s, background 0.2s;
+    min-width: 52px;
+  }
+
+  .copy-btn:hover {
+    color: var(--text-2);
+    border-color: var(--text-3);
+  }
+
+  .copy-btn .btn-label {
+    display: block;
+    transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.18s ease;
+  }
+
+  .copy-btn.copied {
+    color: #9d8ec4;
+    border-color: #5a4490;
+    background: rgba(61, 36, 116, 0.15);
+  }
+
+  .copy-btn.copied .btn-label {
+    transform: scale(1.08);
+  }
+
+  .copy-btn.fading {
+    transition: color 0.6s ease, border-color 0.6s ease, background 0.6s ease;
+    color: var(--text-3);
+    border-color: var(--border);
+    background: none;
+  }
+
+  pre {
+    padding: 1.4rem 1.2rem;
+    overflow-x: auto;
+    font-family: 'Geist Mono', 'Fira Code', 'Courier New', monospace;
+    font-size: 0.79rem;
+    line-height: 1.75;
+    color: var(--text-2);
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+
+  pre .comment { color: #6b6880; }
+
+  .link-row {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    margin-top: 0.25rem;
+    margin-bottom: 1.75rem;
+  }
+
+  .pill-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.3rem 0.85rem;
+    border-radius: 99px;
+    border: 1px solid var(--border);
+    background: var(--bg-raised);
+    font-family: 'Geist', sans-serif;
+    font-size: 0.7rem;
+    font-weight: 400;
+    color: var(--text-3);
+    text-decoration: none;
+    letter-spacing: 0.04em;
+    transition: color 0.18s, border-color 0.18s;
+  }
+
+  .pill-link:hover {
+    color: var(--text-2);
+    border-color: var(--text-3);
+  }
+
+  .skill-img {
+    width: 100%;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    display: block;
+    margin: 1.6rem 0 1.4rem;
+    background: var(--bg-raised);
+  }
+
+  .divider {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 3rem 0;
+  }
+
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 1.8rem 1.5rem;
+    text-align: center;
+    font-size: 0.7rem;
+    color: var(--text-3);
+    letter-spacing: 0.06em;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  @media (max-width: 600px) {
+    h1 { font-size: 2.4rem; }
+    .hero { padding-top: 2.5rem; padding-left: 1.5rem; padding-right: 1.5rem; }
+  }
+</style>
+</head>
+<body>
+
+<div id="progress"></div>
+
+<section class="hero">
+  <h1>How To Build Beautiful Motion Graphics Videos With AI</h1>
+  <p class="subtitle">No Adobe After Effects, no special software. 100% done by AI and rendered from plain HTML. Here's the setup, and a prompt you can hand an agent to learn the system.</p>
+  <div class="byline">
+    <div class="avatar">A</div>
+    <div class="byline-text">
+      <strong>Adi</strong>
+      3 min read &nbsp;·&nbsp; June 2026
+    </div>
+  </div>
+</section>
+
+<div class="video-wrap">
+  <video class="demo-video" controls playsinline muted preload="metadata">
+    <source src="assets/gpt-5.6-demo.mp4" type="video/mp4">
+  </video>
+</div>
+
+<article>
+
+  <p class="drop-cap">Every frame of this video is a screenshot of a webpage. There's no diffusion model and no timeline software involved — just an HTML file with data attributes for timing, a GSAP timeline driving the camera and text, a canvas particle system, and HyperFrames capturing the whole thing frame by frame into an MP4.</p>
+
+  <p>You can spin up a blank HyperFrames project locally and open Studio in the browser and build from scratch. Or, you can point your AI agent such as Claude Code or Codex to my already finished video above and ask it to draw inspiration from the various sophistcated motion graphics techniques such as canvas sweeps, typography animations and so on before building something new.</p>
+
+  <hr class="divider">
+
+  <span class="skill-num">Step 01 / 02</span>
+  <h2>What Is HyperFrames</h2>
+
+  <img class="skill-img" src="https://opengraph.githubassets.com/1/heygen-com/hyperframes" alt="HyperFrames — write HTML, render video, built for agents" loading="lazy">
+
+  <div class="link-row">
+    <a class="pill-link" href="https://hyperframes.heygen.com" target="_blank">↗ hyperframes.heygen.com</a>
+    <a class="pill-link" href="https://github.com/heygen-com/hyperframes" target="_blank">↗ GitHub</a>
+  </div>
+
+  <p>HyperFrames is an open-source framework from HeyGen that turns HTML, CSS, and JavaScript into a deterministic MP4. A composition is just an <code>index.html</code> file with data attributes marking start time, duration, and track for each element. HyperFrames advances a headless browser to each frame's timestamp, screenshots it, and stitches the frames together. Animation can come from CSS, GSAP, canvas, Three.js, Lottie, or a custom adapter — whatever the composition calls for.</p>
+
+  <p>Because a composition is plain HTML rather than a proprietary timeline format, an AI coding agent like Claude Code or Codex can read, write, and edit it the same way it edits any other web project. That's the whole premise: the agent is already fluent in HTML, so let it work in HTML. Below is how to start a blank project:</p>
+
+  <div class="code-wrap">
+    <div class="code-header">
+      <span>INSTALL</span>
+      <button class="copy-btn" onclick="copyCode(this, 'cmd-install')">
+        <span class="btn-label">Copy</span>
+      </button>
+    </div>
+    <pre id="cmd-install">npx hyperframes init my-video --non-interactive --example blank
+cd my-video
+npx hyperframes preview   <span class="comment"># opens HyperFrames Studio in the browser, hot-reloads on save</span></pre>
+  </div>
+
+  <p><code>preview</code> starts the dev server and opens the composition in HyperFrames Studio. Save a change to <code>index.html</code> and the preview updates instantly — no manual refresh, no build step.</p>
+
+  <hr class="divider">
+
+  <span class="skill-num">Step 02 / 02</span>
+  <h2>Hand It To An Agent</h2>
+
+  <p>Once Studio is running locally, the fastest way to learn this particular video's system is to point an agent at a finished repo and have it read through the composition before changing anything. This is the prompt I use to get Claude Code or Codex to inspect a project like this one, file by file, and report back before it touches any code.</p>
+
+  <div class="code-wrap">
+    <div class="code-header">
+      <span>PROMPT</span>
+      <button class="copy-btn" onclick="copyCode(this, 'cmd-prompt')">
+        <span class="btn-label">Copy</span>
+      </button>
+    </div>
+    <pre id="cmd-prompt">Clone this repo: [REPO LINK]
+Open the HyperFrames project and launch Studio:
+cd gpt-5.6
+npm run dev
+
+Then inspect the main project files to understand how this video is built with HTML, CSS, GSAP, canvas, and HyperFrames:
+- `gpt-5.6/index.html` - master HyperFrames composition entrypoint
+- `gpt-5.6/src/scenes.js` - scene markup and on-screen copy
+- `gpt-5.6/src/styles.css` - visual system, layout, typography, cards, backgrounds, logo styling
+- `gpt-5.6/src/timeline.js` - GSAP timeline, camera sweeps, text animation, particle/logo morph, scene timing
+- `gpt-5.6/assets/` and `gpt-5.6/fonts/` - source assets and local typefaces
+
+Pay close attention to reusable techniques like the off-canvas camera world, vertical 9:16 layout, soft background movement, translucent cards, rolling number counter, soft blur-in text reveals, staggered typography, GSAP scene timing, and the canvas particle swarm that morphs into the final logo/CTA.
+
+Use it as inspiration for a new HyperFrames video, not as something to copy exactly. After inspecting it, summarize the structure, the timeline logic, the most reusable techniques, and any adaptation ideas. Tell me when you're ready.</pre>
+  </div>
+
+</article>
+
+<footer>
+  &copy; 2026 &nbsp;·&nbsp; All rights reserved
+</footer>
+
+<script>
+  const bar = document.getElementById('progress');
+  window.addEventListener('scroll', () => {
+    const total = document.body.scrollHeight - window.innerHeight;
+    bar.style.width = (window.scrollY / total * 100) + '%';
+  }, { passive: true });
+
+  let resetTimers = {};
+
+  function copyCode(btn, id) {
+    const text = document.getElementById(id).textContent;
+    const label = btn.querySelector(".btn-label");
+
+    if (resetTimers[id]) clearTimeout(resetTimers[id]);
+    btn.classList.remove("fading");
+    label.textContent = "Copied!";
+    btn.classList.add("copied");
+
+    resetTimers[id] = setTimeout(() => {
+      btn.classList.remove("copied");
+      btn.classList.add("fading");
+      setTimeout(() => {
+        label.textContent = "Copy";
+        btn.classList.remove("fading");
+      }, 620);
+    }, 1600);
+
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).catch(() => fallbackCopy(text));
+    } else {
+      fallbackCopy(text);
+    }
+  }
+
+  function fallbackCopy(text) {
+    const ta = document.createElement("textarea");
+    ta.value = text;
+    ta.style.cssText = "position:fixed;top:0;left:0;opacity:0;pointer-events:none;";
+    document.body.appendChild(ta);
+    ta.focus(); ta.select();
+    try { document.execCommand("copy"); } catch(e) {}
+    document.body.removeChild(ta);
+  }
+</script>
+
+</body>
+</html>
