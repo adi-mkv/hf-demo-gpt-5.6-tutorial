@@ -97,24 +97,15 @@
   .byline-text { font-size: 0.76rem; color: var(--text-3); line-height: 1.5; }
   .byline-text strong { color: var(--text-2); font-weight: 500; display: block; }
 
-  .video-wrap {
-    max-width: var(--col);
-    margin: 2rem auto 0;
-    padding: 0 1.5rem;
-    opacity: 0;
-    animation: fadeUp 0.8s ease 0.18s forwards;
-  }
-
   .demo-video {
     display: block;
     width: min(100%, 420px);
     max-height: 78vh;
-    margin: 0 auto;
+    margin: 2rem auto 0;
     aspect-ratio: 9 / 16;
     object-fit: contain;
-    border-radius: 18px;
-    border: 1px solid var(--border);
-    background: var(--bg-raised);
+    opacity: 0;
+    animation: fadeUp 0.8s ease 0.18s forwards;
   }
 
   article {
@@ -155,17 +146,6 @@
     margin: 3.5rem 0 0.85rem;
     line-height: 1.2;
     letter-spacing: -0.01em;
-  }
-
-  .skill-num {
-    display: inline-block;
-    font-family: 'Geist', sans-serif;
-    font-size: 0.65rem;
-    font-weight: 500;
-    letter-spacing: 0.1em;
-    color: var(--text-3);
-    text-transform: uppercase;
-    margin-bottom: 0.4rem;
   }
 
   /* Code block */
@@ -284,12 +264,6 @@
     background: var(--bg-raised);
   }
 
-  .divider {
-    border: none;
-    border-top: 1px solid var(--border);
-    margin: 3rem 0;
-  }
-
   footer {
     border-top: 1px solid var(--border);
     padding: 1.8rem 1.5rem;
@@ -326,11 +300,9 @@
   </div>
 </section>
 
-<div class="video-wrap">
-  <video class="demo-video" controls playsinline muted preload="metadata">
-    <source src="assets/gpt-5.6-demo.mp4" type="video/mp4">
-  </video>
-</div>
+<video class="demo-video" controls playsinline muted preload="metadata">
+  <source src="gpt-5.6/renders/gpt-5.6-demo.mp4" type="video/mp4">
+</video>
 
 <article>
 
@@ -338,9 +310,6 @@
 
   <p>You can spin up a blank HyperFrames project locally and open Studio in the browser and build from scratch. Or, you can point your AI agent such as Claude Code or Codex to my already finished video above and ask it to draw inspiration from the various sophistcated motion graphics techniques such as canvas sweeps, typography animations and so on before building something new.</p>
 
-  <hr class="divider">
-
-  <span class="skill-num">Step 01 / 02</span>
   <h2>What Is HyperFrames</h2>
 
   <img class="skill-img" src="https://opengraph.githubassets.com/1/heygen-com/hyperframes" alt="HyperFrames — write HTML, render video, built for agents" loading="lazy">
@@ -351,6 +320,8 @@
   </div>
 
   <p>HyperFrames is an open-source framework from HeyGen that turns HTML, CSS, and JavaScript into a deterministic MP4. A composition is just an <code>index.html</code> file with data attributes marking start time, duration, and track for each element. HyperFrames advances a headless browser to each frame's timestamp, screenshots it, and stitches the frames together. Animation can come from CSS, GSAP, canvas, Three.js, Lottie, or a custom adapter — whatever the composition calls for.</p>
+
+  <h2>Starting Blank</h2>
 
   <p>Because a composition is plain HTML rather than a proprietary timeline format, an AI coding agent like Claude Code or Codex can read, write, and edit it the same way it edits any other web project. That's the whole premise: the agent is already fluent in HTML, so let it work in HTML. Below is how to start a blank project:</p>
 
@@ -368,9 +339,6 @@ npx hyperframes preview   <span class="comment"># opens HyperFrames Studio in th
 
   <p><code>preview</code> starts the dev server and opens the composition in HyperFrames Studio. Save a change to <code>index.html</code> and the preview updates instantly — no manual refresh, no build step.</p>
 
-  <hr class="divider">
-
-  <span class="skill-num">Step 02 / 02</span>
   <h2>Hand It To An Agent</h2>
 
   <p>Once Studio is running locally, the fastest way to learn this particular video's system is to point an agent at a finished repo and have it read through the composition before changing anything. This is the prompt I use to get Claude Code or Codex to inspect a project like this one, file by file, and report back before it touches any code.</p>
@@ -382,17 +350,19 @@ npx hyperframes preview   <span class="comment"># opens HyperFrames Studio in th
         <span class="btn-label">Copy</span>
       </button>
     </div>
-    <pre id="cmd-prompt">Clone this repo: [REPO LINK]
-Open the HyperFrames project and launch Studio:
+    <pre id="cmd-prompt">Clone only the HyperFrames project folder:
+git clone --filter=blob:none --sparse https://github.com/adi-mkv/hf-demo-gpt-5.6-tutorial.git
+cd hf-demo-gpt-5.6-tutorial
+git sparse-checkout set gpt-5.6
 cd gpt-5.6
-npm run dev
+Start HyperFrames Studio with `npm run dev`, keeping the long-running dev server alive in the background if your environment requires it.
 
 Then inspect the main project files to understand how this video is built with HTML, CSS, GSAP, canvas, and HyperFrames:
-- `gpt-5.6/index.html` - master HyperFrames composition entrypoint
-- `gpt-5.6/src/scenes.js` - scene markup and on-screen copy
-- `gpt-5.6/src/styles.css` - visual system, layout, typography, cards, backgrounds, logo styling
-- `gpt-5.6/src/timeline.js` - GSAP timeline, camera sweeps, text animation, particle/logo morph, scene timing
-- `gpt-5.6/assets/` and `gpt-5.6/fonts/` - source assets and local typefaces
+- `index.html` - master HyperFrames composition entrypoint
+- `src/scenes.js` - scene markup and on-screen copy
+- `src/styles.css` - visual system, layout, typography, cards, backgrounds, logo styling
+- `src/timeline.js` - GSAP timeline, camera sweeps, text animation, particle/logo morph, scene timing
+- `assets/` and `fonts/` - source assets and local typefaces
 
 Pay close attention to reusable techniques like the off-canvas camera world, vertical 9:16 layout, soft background movement, translucent cards, rolling number counter, soft blur-in text reveals, staggered typography, GSAP scene timing, and the canvas particle swarm that morphs into the final logo/CTA.
 
